@@ -94,7 +94,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   async function updateProduct(updatedProduct: Product) {
     try {
       const token = localStorage.getItem("token")
-      await fetch(`https://galvaotech.onrender.coms/${updatedProduct.id}`, {
+      await fetch(`https://galvaotech.onrender.com/${updatedProduct.id}`, {
         method: "PUT",
         headers: {
   "Content-Type": "application/json",

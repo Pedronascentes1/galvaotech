@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import type { ReactNode } from "react"
 
-
 export type Product = {
   id: number
   name: string
@@ -12,11 +11,6 @@ export type Product = {
   image: string
 }
 
-
-
-
-
-
 type ProductContextType = {
   products: Product[]
   addProduct: (product: Omit<Product, "id">) => void
@@ -24,91 +18,89 @@ type ProductContextType = {
   updateProduct: (product: Product) => void
 }
 
-
 const ProductContext = createContext<ProductContextType | null>(null)
+
+const API_URL = "https://galvaotech.onrender.com/products"
 
 export function ProductProvider({ children }: { children: ReactNode }) {
 
   const [products, setProducts] = useState<Product[]>([])
 
-  // 🔥 Buscar produtos do backend
+  // 🔥 Buscar produtos
   useEffect(() => {
-    fetch("https://galvaotech.onrender.com")
+    fetch(API_URL)
       .then(res => res.json())
       .then(data => setProducts(data))
       .catch(err => console.error("Erro ao buscar produtos:", err))
   }, [])
 
-  // 🔥 Criar produto via API
+  // 🔥 Criar produto
   async function addProduct(product: Omit<Product, "id">) {
-  try {
-    const token = localStorage.getItem("token")
+    try {
+      const token = localStorage.getItem("token")
 
-    const response = await fetch("https://galvaotech.onrender.com", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(product)
-    })
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(product)
+      })
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error("Erro do servidor:", errorData)
-      alert("Erro ao criar produto. Faça login novamente.")
-      return
-    }
+      const newProduct = await response.json()
 
-    const newProduct = await response.json()
-
-    setProducts(prev => [...prev, newProduct])
-
-  } catch (error) {
-    console.error("Erro ao adicionar produto:", error)
-  }
-}
-
-
-
-  // 🔥 Deletar produto via API
-  async function removeProduct(id: number) {
-  try {
-    const token = localStorage.getItem("token")
-
-    await fetch(`https://galvaotech.onrender.com/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${token}`
+      if (!response.ok) {
+        console.error(newProduct)
+        alert("Erro ao criar produto")
+        return
       }
-    })
 
-    setProducts(prev => prev.filter(product => product.id !== id))
-  } catch (error) {
-    console.error("Erro ao remover produto:", error)
+      setProducts(prev => [...prev, newProduct])
+
+    } catch (error) {
+      console.error("Erro ao adicionar produto:", error)
+    }
   }
-}
 
+  // 🔥 Deletar produto
+  async function removeProduct(id: number) {
+    try {
+      const token = localStorage.getItem("token")
 
-  // 🔥 Atualizar produto via API (vamos implementar no backend depois)
+      await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+
+      setProducts(prev => prev.filter(p => p.id !== id))
+    } catch (error) {
+      console.error("Erro ao remover produto:", error)
+    }
+  }
+
+  // 🔥 Atualizar produto
   async function updateProduct(updatedProduct: Product) {
     try {
       const token = localStorage.getItem("token")
-      await fetch(`https://galvaotech.onrender.com/${updatedProduct.id}`, {
+
+      await fetch(`${API_URL}/${updatedProduct.id}`, {
         method: "PUT",
         headers: {
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${token}`
-}
-,
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
         body: JSON.stringify(updatedProduct)
       })
 
       setProducts(prev =>
-        prev.map(product =>
-          product.id === updatedProduct.id ? updatedProduct : product
+        prev.map(p =>
+          p.id === updatedProduct.id ? updatedProduct : p
         )
       )
+
     } catch (error) {
       console.error("Erro ao atualizar produto:", error)
     }

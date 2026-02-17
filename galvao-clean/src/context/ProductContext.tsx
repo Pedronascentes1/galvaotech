@@ -33,7 +33,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   // 🔥 Buscar produtos do backend
   useEffect(() => {
-    fetch("http://localhost:3001/products")
+    fetch("https://galvaotech.onrender.com")
       .then(res => res.json())
       .then(data => setProducts(data))
       .catch(err => console.error("Erro ao buscar produtos:", err))
@@ -44,7 +44,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   try {
     const token = localStorage.getItem("token")
 
-    const response = await fetch("http://localhost:3001/products", {
+    const response = await fetch("https://galvaotech.onrender.com", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +76,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   try {
     const token = localStorage.getItem("token")
 
-    await fetch(`http://localhost:3001/products/${id}`, {
+    await fetch(`https://galvaotech.onrender.com/${id}`, {
       method: "DELETE",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -94,7 +94,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   async function updateProduct(updatedProduct: Product) {
     try {
       const token = localStorage.getItem("token")
-      await fetch(`http://localhost:3001/products/${updatedProduct.id}`, {
+      await fetch(`https://galvaotech.onrender.coms/${updatedProduct.id}`, {
         method: "PUT",
         headers: {
   "Content-Type": "application/json",

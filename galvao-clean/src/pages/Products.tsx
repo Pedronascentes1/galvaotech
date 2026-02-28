@@ -75,8 +75,8 @@ function formatCurrency(value: number) {
     {/* MENU */}
     <div className="flex items-center gap-6 text-gray-600 font-medium">
 
-      <Link to="/produtos" className="hover:text-black transition">
-        Produtos
+      <Link to="/" className="hover:text-black transition">
+        Home
       </Link>
 
       {/* CARRINHO */}

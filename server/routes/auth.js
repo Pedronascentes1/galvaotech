@@ -9,21 +9,32 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body
 
   try {
+    console.log("===== LOGIN REQUEST =====")
+    console.log("Email recebido:", email)
+
     const [results] = await db.query(
       "SELECT * FROM users WHERE email = ?",
       [email]
     )
 
+    console.log("Usuários encontrados:", results.length)
+
     if (results.length === 0) {
-      return res.status(401).json({ message: "Credenciais inválidas" })
+      console.log("❌ Email não encontrado no banco")
+      return res.status(401).json({ message: "Credenciais inválidas - email" })
     }
 
     const user = results[0]
 
+    console.log("Hash no banco:", user.password)
+
     const passwordMatch = await bcrypt.compare(password, user.password)
 
+    console.log("Password match:", passwordMatch)
+
     if (!passwordMatch) {
-      return res.status(401).json({ message: "Credenciais inválidas" })
+      console.log("❌ Senha não confere")
+      return res.status(401).json({ message: "Credenciais inválidas - senha" })
     }
 
     const token = jwt.sign(
@@ -32,10 +43,11 @@ router.post("/login", async (req, res) => {
       { expiresIn: "1h" }
     )
 
+    console.log("✅ Login bem sucedido")
     res.json({ token })
 
   } catch (error) {
-    console.error(error)
+    console.error("🔥 ERRO NO LOGIN:", error)
     res.status(500).json({ message: "Erro no servidor" })
   }
 })

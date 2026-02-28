@@ -1,16 +1,46 @@
+require("dotenv").config()
 const express = require("express")
 const cors = require("cors")
 
 const app = express()
 
-app.use(cors())
+// ✅ CORS: permite seu front (Vercel) e também localhost pra testes
+const allowedOrigins = [
+  "https://galvaotech.vercel.app",
+  "http://localhost:5173",
+  "http://localhost:3000",
+]
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // permite requests sem origin (tipo Postman) e origins permitidas
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.includes(origin)) return callback(null, true)
+    return callback(new Error("CORS bloqueado para: " + origin))
+  },
+  credentials: true,
+}))
+
 app.use(express.json())
 
+// ✅ Rotas
 const productsRoutes = require("./routes/products")
-app.use("/products", productsRoutes)
-
-app.listen(3001, () => {
-  console.log("Servidor rodando na porta 3001")
-})
 const authRoutes = require("./routes/auth")
+
+app.use("/products", productsRoutes)
 app.use("/auth", authRoutes)
+
+// ✅ Rota raiz pra Render não mostrar "Cannot GET /"
+app.get("/", (req, res) => {
+  res.json({ ok: true, message: "API GalvãoTech online 🚀" })
+})
+
+// ✅ Healthcheck (bom pra testar banco e API)
+app.get("/health", (req, res) => {
+  res.json({ ok: true })
+})
+
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log("Servidor rodando na porta", PORT)
+})

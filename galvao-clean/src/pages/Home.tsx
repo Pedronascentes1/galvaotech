@@ -51,7 +51,12 @@ export default function Home() {
 }, [])
 
 
-
+function formatCurrency(value: number) {
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  })
+}
   return (
     <div className="bg-white min-h-screen">
 
@@ -107,7 +112,7 @@ export default function Home() {
                           {item.name}
                         </p>
                         <p className="text-xs text-gray-500">
-                          R$ {item.price.toLocaleString("pt-BR")}
+                          {formatCurrency(Number(item.price))}
                         </p>
                       </div>
 
@@ -124,10 +129,9 @@ export default function Home() {
                 <div className="mt-6 border-t pt-4 flex justify-between font-semibold text-gray-900">
                   <span>Total</span>
                   <span>
-                    R${" "}
-                    {cart
-                      .reduce((sum, item) => sum + item.price, 0)
-                      .toLocaleString("pt-BR")}
+                    {formatCurrency(
+  cart.reduce((sum, item) => sum + Number(item.price), 0)
+)}
                   </span>
                 </div>
               </>

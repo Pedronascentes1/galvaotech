@@ -2,18 +2,100 @@ import { useCart } from "../context/CartContext"
 import { Link } from "react-router-dom"
 import { useState } from "react"
 
+type Bandeira = "visa_master" | "outras"
+
+function calcAntecipacaoRate(parcelas: number, am: number) {
+  if (parcelas <= 1) return 0
+
+  // PV = soma das parcelas descontadas mês a mês
+  const pv = Array.from({ length: parcelas }, (_, i) => {
+    const k = i + 1
+    return (1 / parcelas) / Math.pow(1 + am, k)
+  }).reduce((a, b) => a + b, 0)
+
+  // taxa = 1 - PV
+  return 1 - pv
+}
+
+function getMdrRate(parcelas: number, bandeira: Bandeira) {
+  // conforme sua planilha:
+  // Visa/Master: 1x=3.3% | 2-6=2.7% | 7-18=2.8%
+  // Outras:      1x=4.21% | 2-6=3.17% | 7-18=3.53%
+  if (bandeira === "visa_master") {
+    if (parcelas === 1) return 0.033
+    if (parcelas <= 6) return 0.027
+    return 0.028
+  } else {
+    if (parcelas === 1) return 0.0421
+    if (parcelas <= 6) return 0.0317
+    return 0.0353
+  }
+}
+
+function getAntecipacaoAM(bandeira: Bandeira) {
+  // conforme sua planilha:
+  // Visa/Master: 1.98% a.m.
+  // Outras:      1.39% a.m.
+  return bandeira === "visa_master" ? 0.0198 : 0.0139
+}
+
+function calcCreditoComEntrada(params: {
+  total: number
+  entrada: number
+  parcelas: number
+  bandeira: Bandeira
+}) {
+  const { total, entrada, parcelas, bandeira } = params
+
+  const entradaUsada = Math.max(0, Math.min(entrada, total))
+  const liquidoDesejadoNoCartao = Math.max(0, total - entradaUsada)
+
+  const mdr = getMdrRate(parcelas, bandeira)
+  const am = getAntecipacaoAM(bandeira)
+  const ant = calcAntecipacaoRate(parcelas, am)
+
+  const taxaTotal = mdr + ant
+  const fator = 1 / (1 - taxaTotal) // fator real (tipo o da planilha)
+
+  const brutoNoCartao = liquidoDesejadoNoCartao * fator
+  const valorParcela = parcelas > 0 ? brutoNoCartao / parcelas : 0
+
+  return {
+    entradaUsada,
+    liquidoDesejadoNoCartao,
+    brutoNoCartao,
+    valorParcela,
+    mdr,
+    ant,
+    taxaTotal,
+    fator
+  }
+}
+
+function formatBRL(value: number) {
+  return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+}
+
 export default function Cart() {
 
   const { cart, removeFromCart } = useCart()
 
   const [paymentMethod, setPaymentMethod] = useState("Pix")
   const [installments, setInstallments] = useState(1)
+  const [downPayment, setDownPayment] = useState("") // entrada digitada
+  const [bandeira, setBandeira] = useState<Bandeira>("visa_master")
 
   // 🔥 Garantir que sempre seja número
-  const total = cart.reduce(
-    (sum, item) => sum + Number(item.price),
-    0
-  )
+  const total = cart.reduce((sum, item) => sum + Number(item.price), 0)
+
+  const entradaNum = Number(downPayment || 0)
+
+const sim = calcCreditoComEntrada({
+  total,
+  entrada: entradaNum,
+  parcelas: installments,
+  bandeira
+})
 
   function formatCurrency(value: number) {
     return value.toLocaleString("pt-BR", {
@@ -44,6 +126,11 @@ export default function Cart() {
       message +=
         `\nParcelamento: ${installments}x de R$ ${formatCurrency(total / installments)}`
     }
+    if (paymentMethod === "Crédito") {
+  message += `\nEntrada: ${formatBRL(sim.entradaUsada)}`
+  message += `\nNo cartão: ${installments}x de ${formatBRL(sim.valorParcela)}`
+  message += `\nTotal no cartão: ${formatBRL(sim.brutoNoCartao)}`
+}
 
     const encodedMessage = encodeURIComponent(message)
 
@@ -145,6 +232,33 @@ export default function Cart() {
           {/* Parcelamento */}
           {paymentMethod === "Crédito" && (
             <div>
+              <div className="space-y-3">
+  <div>
+    <p className="text-sm mb-2">Entrada (opcional)</p>
+    <input
+      value={downPayment}
+      onChange={(e) => setDownPayment(e.target.value)}
+      placeholder="Ex: 500"
+      inputMode="numeric"
+      className="w-full border p-2 rounded"
+    />
+    <p className="text-xs text-gray-500 mt-1">
+      Restante será parcelado no cartão.
+    </p>
+  </div>
+
+  <div>
+    <p className="text-sm mb-2">Bandeira do cartão</p>
+    <select
+      value={bandeira}
+      onChange={(e) => setBandeira(e.target.value as Bandeira)}
+      className="w-full border p-2 rounded"
+    >
+      <option value="visa_master">Visa / Master</option>
+      <option value="outras">Outras</option>
+    </select>
+  </div>
+</div>
               <p className="text-sm mb-2">
                 Parcelar em quantas vezes?
               </p>
@@ -170,19 +284,30 @@ export default function Cart() {
           )}
 
           {/* RESUMO */}
-          <div className="border-t pt-4">
-            <div className="flex justify-between text-gray-600">
-              <span>Subtotal</span>
-              <span>R$ {formatCurrency(total)}</span>
-            </div>
+          <div className="border-t pt-4 space-y-2">
+  <div className="flex justify-between text-gray-600">
+    <span>Total do carrinho</span>
+    <span>{formatBRL(total)}</span>
+  </div>
 
-            <div className="flex justify-between font-bold text-lg mt-2">
-              <span>Total</span>
-              <span className="text-blue-600">
-                R$ {formatCurrency(total)}
-              </span>
-            </div>
-          </div>
+  {paymentMethod === "Crédito" && (
+    <>
+      <div className="flex justify-between text-gray-600">
+        <span>Entrada</span>
+        <span>{formatBRL(sim.entradaUsada)}</span>
+      </div>
+
+      <div className="flex justify-between font-bold text-lg">
+        <span>No cartão ({installments}x)</span>
+        <span className="text-blue-600">{formatBRL(sim.brutoNoCartao)}</span>
+      </div>
+
+      <div className="text-sm text-gray-500">
+        {installments}x de {formatBRL(sim.valorParcela)}
+      </div>
+    </>
+  )}
+</div>
 
           <button
             onClick={handleWhatsApp}

@@ -54,7 +54,19 @@ export default function Admin() {
       image: ""
     })
   }
+ function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const file = e.target.files?.[0]
+  if (!file) return
 
+  const reader = new FileReader()
+  reader.onloadend = () => {
+    setForm(prev => ({
+      ...prev,
+      image: reader.result as string
+    }))
+  }
+  reader.readAsDataURL(file)
+}
   return (
     <div className="min-h-screen bg-gray-100 p-10">
       <BackButton />
@@ -117,12 +129,11 @@ export default function Admin() {
           />
 
           <input
-            name="image"
-            placeholder="URL da imagem"
-            value={form.image}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-          />
+  type="file"
+  accept="image/*"
+  onChange={handleImageChange}
+  className="w-full border p-2 rounded"
+/>
 
           <button
             type="submit"

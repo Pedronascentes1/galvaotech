@@ -26,12 +26,12 @@ export default function ProductCard({
     : price
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-6">
+    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 md:p-6">
 
       <img
         src={image}
         alt={name}
-        className="w-full h-56 object-cover rounded-xl mb-4"
+        className="w-full aspect-square object-contain rounded-xl mb-4 bg-gray-100 p-4"
       />
 
       {/* CATEGORIA */}
@@ -77,7 +77,7 @@ export default function ProductCard({
             price: finalPrice
           })
         }
-        className="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700 transition"
+        className="w-full bg-blue-600 text-white py-3 rounded-xl active:scale-95 transition"
       >
         Adicionar
       </button>

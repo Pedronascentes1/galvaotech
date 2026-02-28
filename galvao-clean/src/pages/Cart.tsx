@@ -123,10 +123,6 @@ const sim = calcCreditoComEntrada({
       `Pagamento: ${paymentMethod}`
 
     if (paymentMethod === "Crédito") {
-      message +=
-        `\nParcelamento: ${installments}x de R$ ${formatCurrency(total / installments)}`
-    }
-    if (paymentMethod === "Crédito") {
   message += `\nEntrada: ${formatBRL(sim.entradaUsada)}`
   message += `\nNo cartão: ${installments}x de ${formatBRL(sim.valorParcela)}`
   message += `\nTotal no cartão: ${formatBRL(sim.brutoNoCartao)}`

@@ -55,10 +55,10 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-16 px-6">
-      <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
 
         {/* ESQUERDA */}
-        <div className="col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
 
           <h1 className="text-3xl font-bold text-gray-900">
             Seu Carrinho

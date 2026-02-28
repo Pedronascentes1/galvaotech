@@ -158,11 +158,11 @@ export default function Products() {
       </nav>
 
       {/* CONTEÚDO */}
-      <div className="flex-1 bg-gray-50 py-20 px-6">
+      <div className="border-2 sm:border-3 border-blue-500 rounded-3xl p-6 sm:p-10 flex justify-center">
 
         <div className="max-w-7xl mx-auto">
 
-          <h1 className="text-4xl font-bold mb-10 text-gray-900">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-8 sm:mb-10 text-gray-900">
             Nossos Produtos
           </h1>
 

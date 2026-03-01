@@ -207,14 +207,13 @@ function formatCurrency(value: number) {
       <div className="flex flex-col sm:flex-row gap-4">
         <Link
           to="/produtos"
-          className="bg-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-700" >
+          className="bg-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">
           Ver Catálogo
         </Link>
 
-        <Link to="/sobre">
-         className="bg-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-700"
+        <Link to="/sobre" className="bg-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-700">
         Saiba Mais
-       </Link>
+        </Link>
       </div>
     </div>
 

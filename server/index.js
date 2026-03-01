@@ -12,13 +12,11 @@ const allowedOrigins = [
 ]
 
 app.use(cors({
-  origin: function (origin, callback) {
-    // permite requests sem origin (tipo Postman) e origins permitidas
-    if (!origin) return callback(null, true)
-    if (allowedOrigins.includes(origin)) return callback(null, true)
-    return callback(new Error("CORS bloqueado para: " + origin))
-  },
-  credentials: true,
+  origin: [
+    "https://galvaotech.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }))
 
 app.use(express.json())
@@ -43,4 +41,12 @@ app.get("/health", (req, res) => {
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log("Servidor rodando na porta", PORT)
+})
+
+const rateLimit = require("express-rate-limit")
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // 5 tentativas
+  message: "Muitas tentativas. Tente novamente mais tarde."
 })

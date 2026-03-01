@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt")
 const db = require("../config/db")
 const { SECRET } = require("../config/jwt")
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   const { email, password } = req.body
 
   try {

@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react"
 import type { ReactNode } from "react"
-import toast from "react-hot-toast"
 
 export type Product = {
   id: number
@@ -14,10 +13,9 @@ export type Product = {
 
 type ProductContextType = {
   products: Product[]
-  addProduct: (product: Omit<Product, "id">) => Promise<void>
-  removeProduct: (id: number) => Promise<void>
-  updateProduct: (product: Product) => Promise<void>
-  refreshProducts: () => Promise<void>
+  addProduct: (product: Omit<Product, "id">) => void
+  removeProduct: (id: number) => void
+  updateProduct: (product: Product) => void
 }
 
 const ProductContext = createContext<ProductContextType | null>(null)
@@ -25,149 +23,127 @@ const ProductContext = createContext<ProductContextType | null>(null)
 const API_URL = "https://galvaotech.onrender.com/products"
 
 export function ProductProvider({ children }: { children: ReactNode }) {
+
   const [products, setProducts] = useState<Product[]>([])
 
-  async function refreshProducts() {
-    try {
-      const res = await fetch(API_URL)
-      const data = await res.json()
-      if (!res.ok) {
-        toast.error(data?.error || "Erro ao buscar produtos")
-        return
-      }
-      setProducts(data)
-    } catch (err) {
-      console.error(err)
-      toast.error("Erro ao buscar produtos")
-    }
+  // 🔥 Função global para tratar token inválido
+  function handleUnauthorized() {
+    localStorage.removeItem("token")
+    window.location.href = "/login"
   }
 
+  // 🔥 Buscar produtos
   useEffect(() => {
-    refreshProducts()
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => setProducts(data))
+      .catch(err => console.error("Erro ao buscar produtos:", err))
   }, [])
 
+  // 🔥 Criar produto
   async function addProduct(product: Omit<Product, "id">) {
-    const token = localStorage.getItem("token")
-    if (!token) {
-      toast.error("Você precisa estar logado")
-      return
-    }
-
-    const loadingId = toast.loading("Criando produto...")
-
     try {
+      const token = localStorage.getItem("token")
+
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(product),
+        body: JSON.stringify(product)
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        toast.dismiss(loadingId)
-        toast.error(data?.message || data?.error || "Erro ao criar produto")
+      if (response.status === 401) {
+        handleUnauthorized()
         return
       }
 
-      setProducts(prev => [...prev, data])
-      toast.dismiss(loadingId)
-      toast.success("Produto criado com sucesso ✅")
+      const newProduct = await response.json()
+
+      if (!response.ok) {
+        alert("Erro ao criar produto")
+        return
+      }
+
+      alert("Produto criado com sucesso ✅")
+      setProducts(prev => [...prev, newProduct])
+
     } catch (error) {
-      console.error(error)
-      toast.dismiss(loadingId)
-      toast.error("Erro ao criar produto")
+      console.error("Erro ao adicionar produto:", error)
     }
   }
 
+  // 🔥 Deletar produto
   async function removeProduct(id: number) {
-    const token = localStorage.getItem("token")
-    if (!token) {
-      toast.error("Você precisa estar logado")
-      return
-    }
-
-    const loadingId = toast.loading("Removendo produto...")
-
     try {
+      const token = localStorage.getItem("token")
+
       const response = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`,
-        },
+          "Authorization": `Bearer ${token}`
+        }
       })
 
-      const data = await response.json().catch(() => ({}))
-
-      if (!response.ok) {
-        toast.dismiss(loadingId)
-        toast.error(data?.message || data?.error || "Erro ao remover produto")
+      if (response.status === 401) {
+        handleUnauthorized()
         return
       }
 
+      if (!response.ok) {
+        alert("Erro ao remover produto")
+        return
+      }
+
+      alert("Produto removido com sucesso ✅")
       setProducts(prev => prev.filter(p => p.id !== id))
-      toast.dismiss(loadingId)
-      toast.success("Produto removido ✅")
+
     } catch (error) {
-      console.error(error)
-      toast.dismiss(loadingId)
-      toast.error("Erro ao remover produto")
+      console.error("Erro ao remover produto:", error)
     }
   }
 
+  // 🔥 Atualizar produto
   async function updateProduct(updatedProduct: Product) {
-    const token = localStorage.getItem("token")
-    if (!token) {
-      toast.error("Você precisa estar logado")
-      return
-    }
-
-    const loadingId = toast.loading("Atualizando produto...")
-
     try {
+      const token = localStorage.getItem("token")
+
       const response = await fetch(`${API_URL}/${updatedProduct.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(updatedProduct),
+        body: JSON.stringify(updatedProduct)
       })
 
-      const data = await response.json().catch(() => ({}))
-
-      if (!response.ok) {
-        toast.dismiss(loadingId)
-        toast.error(data?.message || data?.error || "Erro ao atualizar produto")
+      if (response.status === 401) {
+        handleUnauthorized()
         return
       }
 
-      // Atualiza localmente (rápido e responsivo)
+      if (!response.ok) {
+        alert("Erro ao atualizar produto")
+        return
+      }
+
+      alert("Produto atualizado com sucesso ✅")
+
       setProducts(prev =>
-        prev.map(p => (p.id === updatedProduct.id ? updatedProduct : p))
+        prev.map(p =>
+          p.id === updatedProduct.id ? updatedProduct : p
+        )
       )
 
-      toast.dismiss(loadingId)
-      toast.success("Produto atualizado com sucesso ✅")
     } catch (error) {
-      console.error(error)
-      toast.dismiss(loadingId)
-      toast.error("Erro ao atualizar produto")
+      console.error("Erro ao atualizar produto:", error)
     }
   }
 
   return (
     <ProductContext.Provider
-      value={{
-        products,
-        addProduct,
-        removeProduct,
-        updateProduct,
-        refreshProducts,
-      }}
+      value={{ products, addProduct, removeProduct, updateProduct }}
     >
       {children}
     </ProductContext.Provider>
@@ -176,6 +152,8 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
 export function useProducts() {
   const context = useContext(ProductContext)
-  if (!context) throw new Error("useProducts must be used inside ProductProvider")
+  if (!context) {
+    throw new Error("useProducts must be used inside ProductProvider")
+  }
   return context
 }

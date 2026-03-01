@@ -5,7 +5,7 @@ import { useCart } from "../context/CartContext"
 import { useState, useRef, useEffect } from "react"
 import logo from "../assets/logo.png"
 import Footer from "../components/Footer"
-
+import { ShieldCheck, Truck, Phone } from "lucide-react"
 
 
 
@@ -281,9 +281,9 @@ function formatCurrency(value: number) {
       {/* CARD 1 */}
       <div className="bg-white p-10 rounded-2xl shadow-md hover:shadow-lg transition">
         <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-          <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0-3-3-3-3-3s0 3-3 3m6 0c0-3 3-3 3-3s0 3 3 3m-6 0v10m0-10H9m3 0h3"/>
-          </svg>
+          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
+  <ShieldCheck className="w-8 h-8 text-blue-600" />
+</div>
         </div>
 
         <h3 className="text-xl font-semibold mb-4">
@@ -298,9 +298,9 @@ function formatCurrency(value: number) {
       {/* CARD 2 */}
       <div className="bg-white p-10 rounded-2xl shadow-md hover:shadow-lg transition">
         <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-          <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 17V7m0 0l-4 4m4-4l4 4m6 6V7m0 0l-4 4m4-4l4 4"/>
-          </svg>
+          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
+  <Truck className="w-8 h-8 text-blue-600" />
+</div>
         </div>
 
         <h3 className="text-xl font-semibold mb-4">
@@ -315,9 +315,9 @@ function formatCurrency(value: number) {
       {/* CARD 3 */}
       <div className="bg-white p-10 rounded-2xl shadow-md hover:shadow-lg transition">
         <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-          <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h2l3 7-1 2h11"/>
-          </svg>
+          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
+  <Phone className="w-8 h-8 text-blue-600" />
+</div>
         </div>
 
         <h3 className="text-xl font-semibold mb-4">

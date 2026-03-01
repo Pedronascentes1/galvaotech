@@ -267,26 +267,28 @@ function formatCurrency(value: number) {
 
   </div>
 </section>
+
 <section className="bg-gray-50 py-24">
   <div className="max-w-7xl mx-auto px-6">
 
-    {/* TÍTULO */}
     <h2 className="text-4xl font-bold text-center text-gray-900 mb-16">
       Por Que Escolher Galvão Tech?
     </h2>
 
-    {/* CARDS */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
 
-      {/* CARD 1 */}
-      <div className="bg-white p-10 rounded-2xl shadow-md hover:shadow-lg transition">
-        <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-  <ShieldCheck className="w-8 h-8 text-blue-600" />
-</div>
+      {/* GARANTIA */}
+      <div className="bg-white/80 backdrop-blur-xl border border-gray-200 p-10 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 group">
+
+        <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-full 
+                        bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 
+                        shadow-md border border-blue-200 
+                        mb-8 transition duration-300 group-hover:scale-110">
+
+          <ShieldCheck className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
         </div>
 
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-900">
           Garantia de 6 Meses
         </h3>
 
@@ -295,45 +297,51 @@ function formatCurrency(value: number) {
         </p>
       </div>
 
-      {/* CARD 2 */}
-      <div className="bg-white p-10 rounded-2xl shadow-md hover:shadow-lg transition">
-        <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-  <Truck className="w-8 h-8 text-blue-600" />
-</div>
+      {/* ENTREGA */}
+      <div className="bg-white/80 backdrop-blur-xl border border-gray-200 p-10 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 group">
+
+        <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-full 
+                        bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 
+                        shadow-md border border-blue-200 
+                        mb-8 transition duration-300 group-hover:scale-110">
+
+          <Truck className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
         </div>
 
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-900">
           Entrega Rápida
         </h3>
 
         <p className="text-gray-600 leading-relaxed">
-          Pronta entrega em estoque ou encomenda em 3 a 7 dias úteis. Temos todos os modelos de iPhones.
+          Pronta entrega em estoque ou encomenda em 3 a 7 dias úteis.
+          Temos todos os modelos de iPhones.
         </p>
       </div>
 
-      {/* CARD 3 */}
-      <div className="bg-white p-10 rounded-2xl shadow-md hover:shadow-lg transition">
-        <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-          <div className="w-16 h-16 flex items-center justify-center rounded-full bg-blue-100 mb-6">
-  <Phone className="w-8 h-8 text-blue-600" />
-</div>
+      {/* SUPORTE */}
+      <div className="bg-white/80 backdrop-blur-xl border border-gray-200 p-10 rounded-3xl shadow-lg hover:shadow-2xl transition duration-300 group">
+
+        <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center rounded-full 
+                        bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 
+                        shadow-md border border-blue-200 
+                        mb-8 transition duration-300 group-hover:scale-110">
+
+          <Phone className="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" />
         </div>
 
-        <h3 className="text-xl font-semibold mb-4">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-900">
           Suporte Dedicado
         </h3>
 
         <p className="text-gray-600 leading-relaxed">
-          Atendimento personalizado via WhatsApp. Tire suas dúvidas e finalize sua compra com facilidade.
+          Atendimento personalizado via WhatsApp.
+          Tire suas dúvidas e finalize sua compra com facilidade.
         </p>
       </div>
 
     </div>
-
   </div>
 </section>
-
 
          {/* Produtos */}
 <section

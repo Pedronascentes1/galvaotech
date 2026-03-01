@@ -212,9 +212,9 @@ function formatCurrency(value: number) {
           Ver Catálogo
         </Link>
 
-        <button className="border border-white px-6 py-3 rounded-lg">
-          Saiba Mais
-        </button>
+        <Link to="/sobre">
+  Saiba Mais
+</Link>
       </div>
     </div>
 

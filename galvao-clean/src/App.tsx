@@ -8,7 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 
 import { CartProvider } from "./context/CartContext"
 import { ProductProvider } from "./context/ProductContext"
-
+import Sobre from "./pages/Sobre"
 function App() {
   return (
     <CartProvider>
@@ -19,6 +19,7 @@ function App() {
             <Route path="/produtos" element={<Products />} />
             <Route path="/carrinho" element={<Cart />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/sobre" element={<Sobre />} />
             <Route
   path="/admin"
   element={

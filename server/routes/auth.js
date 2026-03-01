@@ -5,36 +5,34 @@ const bcrypt = require("bcrypt")
 const db = require("../config/db")
 const { SECRET } = require("../config/jwt")
 
+const rateLimit = require("express-rate-limit")
+
+// 🔒 LIMITADOR DE LOGIN
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5,
+  message: "Muitas tentativas. Tente novamente mais tarde."
+})
+
 router.post("/login", loginLimiter, async (req, res) => {
   const { email, password } = req.body
 
   try {
-    console.log("===== LOGIN REQUEST =====")
-    console.log("Email recebido:", email)
-
     const [results] = await db.query(
       "SELECT * FROM users WHERE email = ?",
       [email]
     )
 
-    console.log("Usuários encontrados:", results.length)
-
     if (results.length === 0) {
-      console.log("❌ Email não encontrado no banco")
-      return res.status(401).json({ message: "Credenciais inválidas - email" })
+      return res.status(401).json({ message: "Credenciais inválidas" })
     }
 
     const user = results[0]
 
-    console.log("Hash no banco:", user.password)
-
     const passwordMatch = await bcrypt.compare(password, user.password)
 
-    console.log("Password match:", passwordMatch)
-
     if (!passwordMatch) {
-      console.log("❌ Senha não confere")
-      return res.status(401).json({ message: "Credenciais inválidas - senha" })
+      return res.status(401).json({ message: "Credenciais inválidas" })
     }
 
     const token = jwt.sign(
@@ -43,11 +41,10 @@ router.post("/login", loginLimiter, async (req, res) => {
       { expiresIn: "1h" }
     )
 
-    console.log("✅ Login bem sucedido")
     res.json({ token })
 
   } catch (error) {
-    console.error("🔥 ERRO NO LOGIN:", error)
+    console.error(error)
     res.status(500).json({ message: "Erro no servidor" })
   }
 })

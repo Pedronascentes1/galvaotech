@@ -359,6 +359,7 @@ function formatCurrency(value: number) {
       {products.map(product => (
   <ProductCard
   key={product.id}
+  id={product.id}
   name={product.name}
   description={product.description}
   category={product.category}

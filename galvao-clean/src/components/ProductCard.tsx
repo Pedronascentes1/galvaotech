@@ -1,15 +1,17 @@
+import { Link } from "react-router-dom"
 import { useCart } from "../context/CartContext"
-
 type Props = {
+  id: number
   name: string
   description: string
-  category?: string
+  category: string
   price: number
-  discountPrice?: number | null
+  discountPrice?: number
   image: string
 }
 
 export default function ProductCard({
+  id,
   name,
   description,
   category,
@@ -26,7 +28,8 @@ export default function ProductCard({
     : price
 
   return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 md:p-6">
+  <Link to={`/produto/${id}`}>
+    <div className="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
 
       <img
         src={image}
@@ -83,5 +86,6 @@ export default function ProductCard({
       </button>
 
     </div>
+    </Link>
   )
 }

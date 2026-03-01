@@ -1,26 +1,26 @@
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import { useProducts } from "../context/ProductContext"
-import { useState } from "react"
+import { useCart } from "../context/CartContext"
 import Footer from "../components/Footer"
 
 export default function ProductDetails() {
 
   const { id } = useParams()
+  const navigate = useNavigate()
   const { products } = useProducts()
+  const { addToCart } = useCart()
 
   const product = products.find(p => p.id === Number(id))
-
-  const [installments, setInstallments] = useState(1)
 
   if (!product) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Produto não encontrado.</p>
+        <p className="text-gray-500 text-lg">
+          Produto não encontrado.
+        </p>
       </div>
     )
   }
-
-  const price = product.discountPrice || product.price
 
   function formatCurrency(value: number) {
     return value.toLocaleString("pt-BR", {
@@ -29,21 +29,9 @@ export default function ProductDetails() {
     })
   }
 
-  function handleWhatsApp() {
-    const phoneNumber = "5534999126661"
-
-    const message =
-      `Olá, tenho interesse no produto:\n\n` +
-      `${product!.name}\n` +
-      `Preço: ${formatCurrency(price)}\n` +
-      `Parcelamento: ${installments}x de ${formatCurrency(price / installments)}`
-
-    const encodedMessage = encodeURIComponent(message)
-
-    window.open(
-      `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
-      "_blank"
-    )
+  function handleAddToCart() {
+    addToCart(product!)
+    navigate("/carrinho")
   }
 
   return (
@@ -84,40 +72,16 @@ export default function ProductDetails() {
             )}
 
             <p className="text-4xl font-bold text-blue-600">
-              {formatCurrency(price)}
+              {formatCurrency(product.discountPrice || product.price)}
             </p>
           </div>
 
-          {/* PARCELAMENTO */}
-          <div>
-            <p className="text-sm mb-2 text-gray-600">
-              Parcelar em até 18x:
-            </p>
-
-            <select
-              value={installments}
-              onChange={(e) =>
-                setInstallments(Number(e.target.value))
-              }
-              className="w-full border border-gray-200 p-3 rounded-xl"
-            >
-              {[...Array(18)].map((_, i) => {
-                const parcela = price / (i + 1)
-                return (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}x de {formatCurrency(parcela)}
-                  </option>
-                )
-              })}
-            </select>
-          </div>
-
-          {/* BOTÃO WHATSAPP */}
+          {/* BOTÃO */}
           <button
-            onClick={handleWhatsApp}
+            onClick={handleAddToCart}
             className="w-full bg-black text-white py-4 rounded-2xl text-lg font-semibold hover:bg-gray-800 transition"
           >
-            Comprar via WhatsApp
+            Adicionar ao Carrinho
           </button>
 
         </div>

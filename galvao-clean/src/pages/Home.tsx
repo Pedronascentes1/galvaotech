@@ -200,7 +200,7 @@ function formatCurrency(value: number) {
       </h1>
 
       <p className="text-gray-300 mb-8">
-        Produtos originais com garantia de 6 meses.
+        Produtos originais com garantia.
         Pronta entrega e encomenda disponível.
       </p>
 

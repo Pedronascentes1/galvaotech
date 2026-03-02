@@ -7,6 +7,7 @@ export default function Admin() {
   const { products, addProduct, removeProduct, updateProduct } = useProducts()
 
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const [form, setForm] = useState({
     name: "",
@@ -17,56 +18,81 @@ export default function Admin() {
     image: ""
   })
 
-  function handleChange(e: any) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  function handleSubmit(e: any) {
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setSelectedFile(file)
+  }
+
+  async function uploadImage(file: File) {
+    const formData = new FormData()
+    formData.append("image", file)
+
+    const response = await fetch("https://galvaotech.onrender.com/upload", {
+      method: "POST",
+      body: formData
+    })
+
+    if (!response.ok) {
+      throw new Error("Erro ao enviar imagem")
+    }
+
+    const data = await response.json()
+    return data.url
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
 
     if (!form.name || !form.price) return
 
-    const productData = {
-      name: form.name,
-      description: form.description,
-      category: form.category,
-      price: Number(form.price),
-      discountPrice: form.discountPrice
-        ? Number(form.discountPrice)
-        : undefined,
-      image: form.image
+    let imageUrl = form.image
+
+    try {
+      if (selectedFile) {
+        imageUrl = await uploadImage(selectedFile)
+      }
+
+      const productData = {
+        name: form.name,
+        description: form.description,
+        category: form.category,
+        price: Number(form.price),
+        discountPrice: form.discountPrice
+          ? Number(form.discountPrice)
+          : undefined,
+        image: imageUrl
+      }
+
+      if (editingId) {
+        updateProduct({ id: editingId, ...productData })
+        setEditingId(null)
+      } else {
+        addProduct(productData as any)
+      }
+
+      setForm({
+        name: "",
+        description: "",
+        category: "Lacrado",
+        price: "",
+        discountPrice: "",
+        image: ""
+      })
+
+      setSelectedFile(null)
+
+    } catch (error) {
+      console.error(error)
+      alert("Erro ao enviar imagem.")
     }
-
-    if (editingId) {
-      updateProduct({ id: editingId, ...productData })
-      setEditingId(null)
-    } else {
-      addProduct(productData as any)
-    }
-
-    setForm({
-      name: "",
-      description: "",
-      category: "Lacrado",
-      price: "",
-      discountPrice: "",
-      image: ""
-    })
   }
- function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-  const file = e.target.files?.[0]
-  if (!file) return
 
-  const reader = new FileReader()
-  reader.onloadend = () => {
-    setForm(prev => ({
-      ...prev,
-      image: reader.result as string
-    }))
-  }
-  reader.readAsDataURL(file)
-}
   return (
     <div className="min-h-screen bg-gray-100 p-10">
       <BackButton />
@@ -77,7 +103,6 @@ export default function Admin() {
           Gerenciar Produtos
         </h1>
 
-        {/* FORMULÁRIO */}
         <form
           onSubmit={handleSubmit}
           className="bg-white p-6 rounded-xl shadow mb-10 space-y-4"
@@ -129,11 +154,11 @@ export default function Admin() {
           />
 
           <input
-  type="file"
-  accept="image/*"
-  onChange={handleImageChange}
-  className="w-full border p-2 rounded"
-/>
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full border p-2 rounded"
+          />
 
           <button
             type="submit"
@@ -144,7 +169,6 @@ export default function Admin() {
 
         </form>
 
-        {/* LISTAGEM */}
         <div className="space-y-6">
           {products.map(product => (
             <div
@@ -161,7 +185,6 @@ export default function Admin() {
                   {product.description}
                 </p>
 
-                {/* PREÇO COM DESCONTO */}
                 {product.discountPrice ? (
                   <>
                     <p className="text-gray-400 line-through text-sm">
@@ -180,6 +203,14 @@ export default function Admin() {
                 <p className="text-sm text-gray-400 mt-1">
                   {product.category}
                 </p>
+
+                {product.image && (
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-20 mt-2 rounded"
+                  />
+                )}
 
               </div>
 

@@ -46,3 +46,5 @@ app.listen(PORT, () => {
 const rateLimit = require("express-rate-limit")
 
 console.log("DATABASE_URL ATUAL:", process.env.DATABASE_URL)
+const uploadRoutes = require("./routes/upload")
+app.use("/upload", uploadRoutes)

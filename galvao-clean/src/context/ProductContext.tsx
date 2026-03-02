@@ -13,9 +13,9 @@ export type Product = {
 
 type ProductContextType = {
   products: Product[]
-  addProduct: (product: Omit<Product, "id">) => void
-  removeProduct: (id: number) => void
-  updateProduct: (product: Product) => void
+  addProduct: (product: Omit<Product, "id">) => Promise<void>
+  removeProduct: (id: number) => Promise<void>
+  updateProduct: (product: Product) => Promise<void>
 }
 
 const ProductContext = createContext<ProductContextType | null>(null)
@@ -26,21 +26,25 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
   const [products, setProducts] = useState<Product[]>([])
 
-  // 🔥 Função global para tratar token inválido
   function handleUnauthorized() {
     localStorage.removeItem("token")
     window.location.href = "/login"
   }
 
-  // 🔥 Buscar produtos
+  async function fetchProducts() {
+    try {
+      const res = await fetch(API_URL)
+      const data = await res.json()
+      setProducts(data)
+    } catch (err) {
+      console.error("Erro ao buscar produtos:", err)
+    }
+  }
+
   useEffect(() => {
-    fetch(API_URL)
-      .then(res => res.json())
-      .then(data => setProducts(data))
-      .catch(err => console.error("Erro ao buscar produtos:", err))
+    fetchProducts()
   }, [])
 
-  // 🔥 Criar produto
   async function addProduct(product: Omit<Product, "id">) {
     try {
       const token = localStorage.getItem("token")
@@ -59,22 +63,20 @@ export function ProductProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      const newProduct = await response.json()
-
       if (!response.ok) {
         alert("Erro ao criar produto")
         return
       }
 
       alert("Produto criado com sucesso ✅")
-      setProducts(prev => [...prev, newProduct])
+
+      await fetchProducts()
 
     } catch (error) {
       console.error("Erro ao adicionar produto:", error)
     }
   }
 
-  // 🔥 Deletar produto
   async function removeProduct(id: number) {
     try {
       const token = localStorage.getItem("token")
@@ -97,14 +99,14 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       }
 
       alert("Produto removido com sucesso ✅")
-      setProducts(prev => prev.filter(p => p.id !== id))
+
+      await fetchProducts()
 
     } catch (error) {
       console.error("Erro ao remover produto:", error)
     }
   }
 
-  // 🔥 Atualizar produto
   async function updateProduct(updatedProduct: Product) {
     try {
       const token = localStorage.getItem("token")
@@ -130,11 +132,7 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
       alert("Produto atualizado com sucesso ✅")
 
-      setProducts(prev =>
-        prev.map(p =>
-          p.id === updatedProduct.id ? updatedProduct : p
-        )
-      )
+      await fetchProducts()
 
     } catch (error) {
       console.error("Erro ao atualizar produto:", error)

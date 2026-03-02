@@ -111,7 +111,7 @@ const sim = calcCreditoComEntrada({
 
     if (cart.length === 0) return
 
-    const phoneNumber = "5534999126661"
+    const phoneNumber = "5534933003198"
 
     const productList = cart
       .map(item =>

@@ -20,7 +20,7 @@ export default function ProductCard({
   image
 }: Props) {
 
-  const { addToCart } = useCart()
+  useCart()
 
 
   return (
@@ -69,20 +69,12 @@ export default function ProductCard({
 
       </div>
 
-      <button
-        onClick={() =>
-          addToCart({
-  id,
-  name,
-  price,
-  discountPrice
-})
-        }
-        className="w-full bg-blue-600 text-white py-3 rounded-xl active:scale-95 transition"
-      >
-        Adicionar
-      </button>
-
+      <Link
+  to={`/produto/${id}`}
+  className="bg-black text-white py-2 rounded-lg text-center block"
+>
+  Ver Produto
+</Link>
     </div>
     </Link>
   )

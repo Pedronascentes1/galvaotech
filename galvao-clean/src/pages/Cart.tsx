@@ -159,9 +159,12 @@ const sim = calcCreditoComEntrada({
                 <h2 className="font-semibold text-lg">
                   {item.name}
                 </h2>
+                <p className="text-sm text-gray-500">
+  Quantidade: {item.quantity}
+</p>
 
                 <p className="text-blue-600 font-bold">
-                  R$ {formatCurrency(Number(item.price))}
+                  {formatBRL(item.price * item.quantity)}
                 </p>
               </div>
 

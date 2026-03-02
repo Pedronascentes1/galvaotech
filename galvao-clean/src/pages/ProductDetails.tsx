@@ -10,17 +10,17 @@ export default function ProductDetails() {
   const { products } = useProducts()
   const { addToCart } = useCart()
 
-  const product = products.find(p => p.id === Number(id))
+  const product = products.find(p => p.id === Number(id))!
 
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 text-lg">
-          Produto não encontrado.
-        </p>
-      </div>
-    )
-  }
+if (!product) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-gray-500 text-lg">
+        Produto não encontrado.
+      </p>
+    </div>
+  )
+}
 
   function formatCurrency(value: number) {
     return value.toLocaleString("pt-BR", {
@@ -30,9 +30,15 @@ export default function ProductDetails() {
   }
 
   function handleAddToCart() {
-    addToCart(product!)
-    navigate("/carrinho")
-  }
+  addToCart({
+    id: product.id,
+    name: product.name,
+    price: product.price,
+    discountPrice: product.discountPrice
+  })
+
+  navigate("/carrinho")
+}
 
   return (
     <div className="bg-white min-h-screen flex flex-col">

@@ -76,9 +76,11 @@ export default function ProductCard({
       <button
         onClick={() =>
           addToCart({
-            name,
-            price: finalPrice
-          })
+  id,
+  name,
+  price,
+  discountPrice
+})
         }
         className="w-full bg-blue-600 text-white py-3 rounded-xl active:scale-95 transition"
       >

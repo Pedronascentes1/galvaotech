@@ -139,9 +139,9 @@ function formatCurrency(value: number) {
         ) : (
           <>
             <div className="space-y-4">
-              {cart.map((item, index) => (
+              {cart.map((item) => (
                 <div
-                  key={index}
+                  key={item.id}
                   className="flex justify-between items-center bg-gray-50 p-3 rounded-xl"
                 >
                   <div className="min-w-0">
@@ -154,7 +154,7 @@ function formatCurrency(value: number) {
                   </div>
 
                   <button
-                    onClick={() => removeFromCart(index)}
+                    onClick={() => removeFromCart(item.id)}
                     className="text-red-500 text-xs hover:text-red-700 ml-3"
                   >
                     ✕

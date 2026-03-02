@@ -86,7 +86,10 @@ export default function Cart() {
   const [bandeira, setBandeira] = useState<Bandeira>("visa_master")
 
   // 🔥 Garantir que sempre seja número
-  const total = cart.reduce((sum, item) => sum + Number(item.price), 0)
+ const total = cart.reduce(
+  (sum, item) => sum + Number(item.price) * item.quantity,
+  0
+)
 
   const entradaNum = Number(downPayment || 0)
 
@@ -112,7 +115,7 @@ const sim = calcCreditoComEntrada({
 
     const productList = cart
       .map(item =>
-        `- ${item.name} | R$ ${formatCurrency(Number(item.price))}`
+        `- ${item.name} x${item.quantity} | ${formatBRL(item.price * item.quantity)}`
       )
       .join("\n")
 
@@ -147,9 +150,9 @@ const sim = calcCreditoComEntrada({
             Seu Carrinho
           </h1>
 
-          {cart.map((item, index) => (
+          {cart.map((item) => (
             <div
-              key={index}
+              key={item.id}
               className="bg-white p-6 rounded-2xl shadow flex justify-between items-center"
             >
               <div>
@@ -163,7 +166,7 @@ const sim = calcCreditoComEntrada({
               </div>
 
               <button
-                onClick={() => removeFromCart(index)}
+                onClick={() => removeFromCart(item.id)}
                 className="text-red-500 hover:text-red-700"
               >
                 🗑
@@ -267,14 +270,21 @@ const sim = calcCreditoComEntrada({
                 className="w-full border p-2 rounded"
               >
                 {[...Array(18)].map((_, i) => {
-                  const parcela = total / (i + 1)
+  const parcelas = i + 1
 
-                  return (
-                    <option key={i + 1} value={i + 1}>
-                      {i + 1}x de R$ {formatCurrency(parcela)}
-                    </option>
-                  )
-                })}
+  const simLocal = calcCreditoComEntrada({
+    total,
+    entrada: entradaNum,
+    parcelas,
+    bandeira
+  })
+
+  return (
+    <option key={parcelas} value={parcelas}>
+      {parcelas}x de {formatBRL(simLocal.valorParcela)}
+    </option>
+  )
+})}
               </select>
             </div>
           )}

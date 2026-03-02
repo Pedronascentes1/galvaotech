@@ -22,10 +22,6 @@ export default function ProductCard({
 
   const { addToCart } = useCart()
 
-  // 🔥 Se tiver desconto usa ele, senão usa preço normal
-  const finalPrice = discountPrice && discountPrice > 0
-    ? discountPrice
-    : price
 
   return (
   <Link to={`/produto/${id}`}>

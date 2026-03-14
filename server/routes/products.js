@@ -78,7 +78,6 @@ router.post("/", authMiddleware, async (req, res) => {
 // ATUALIZAR (protegido)
 
 router.put("/:id", authMiddleware, async (req, res) => {
-
   try {
 
     const { id } = req.params
@@ -117,7 +116,6 @@ router.put("/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Erro ao atualizar produto" })
 
   }
-
 })
 
 

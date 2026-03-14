@@ -12,15 +12,15 @@ export default function ProductDetails() {
 
   const product = products.find(p => p.id === Number(id))!
 
-if (!product) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-gray-500 text-lg">
-        Produto não encontrado.
-      </p>
-    </div>
-  )
-}
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500 text-lg">
+          Produto não encontrado.
+        </p>
+      </div>
+    )
+  }
 
   function formatCurrency(value: number) {
     return value.toLocaleString("pt-BR", {
@@ -30,15 +30,15 @@ if (!product) {
   }
 
   function handleAddToCart() {
-  addToCart({
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    discountPrice: product.discountPrice
-  })
 
-  navigate("/carrinho")
-}
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.discountPrice || product.price
+    })
+
+    navigate("/carrinho")
+  }
 
   return (
     <div className="bg-white min-h-screen flex flex-col">
@@ -57,9 +57,26 @@ if (!product) {
         {/* INFORMAÇÕES */}
         <div className="space-y-8">
 
-          <span className="text-sm bg-blue-100 text-blue-600 px-4 py-1 rounded-full">
-            {product.category}
-          </span>
+          {/* CATEGORIA + STATUS */}
+          <div className="flex items-center gap-3">
+
+            <span className="text-sm bg-blue-100 text-blue-600 px-4 py-1 rounded-full">
+              {product.category}
+            </span>
+
+            <span
+              className={`text-sm px-4 py-1 rounded-full font-medium ${
+                product.availability === "pronta_entrega"
+                  ? "bg-green-100 text-green-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }`}
+            >
+              {product.availability === "pronta_entrega"
+                ? "Pronta Entrega"
+                : "Produto por Encomenda"}
+            </span>
+
+          </div>
 
           <h1 className="text-4xl font-bold text-gray-900">
             {product.name}
@@ -71,6 +88,7 @@ if (!product) {
 
           {/* PREÇO */}
           <div className="space-y-2">
+
             {product.discountPrice && (
               <p className="text-gray-400 line-through text-lg">
                 {formatCurrency(product.price)}
@@ -80,6 +98,7 @@ if (!product) {
             <p className="text-4xl font-bold text-blue-600">
               {formatCurrency(product.discountPrice || product.price)}
             </p>
+
           </div>
 
           {/* BOTÃO */}
@@ -91,9 +110,11 @@ if (!product) {
           </button>
 
         </div>
+
       </div>
 
       <Footer />
+
     </div>
   )
 }

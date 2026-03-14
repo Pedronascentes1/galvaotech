@@ -9,6 +9,7 @@ export type Product = {
   price: number
   discountPrice?: number
   image: string
+  availability: "pronta_entrega" | "encomenda"
 }
 
 type ProductContextType = {

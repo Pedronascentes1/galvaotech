@@ -236,7 +236,7 @@ function formatCurrency(value: number) {
       {/* ITEM 1 */}
       <div className="space-y-2">
         <h3 className="text-5xl font-bold text-blue-600">
-          5000+
+          1500+
         </h3>
         <p className="text-gray-600 text-lg">
           Clientes Satisfeitos
@@ -334,7 +334,7 @@ function formatCurrency(value: number) {
         </h3>
 
         <p className="text-gray-600 leading-relaxed">
-          Atendimento personalizado via WhatsApp.
+          Atendimento personalizado.
           Tire suas dúvidas e finalize sua compra com facilidade.
         </p>
       </div>
@@ -366,6 +366,7 @@ function formatCurrency(value: number) {
   price={product.price}
   discountPrice={product.discountPrice}
   image={product.image}
+  availability={product.availability}
 />
 
 

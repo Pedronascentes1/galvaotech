@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { useCart } from "../context/CartContext"
+
 type Props = {
   id: number
   name: string
@@ -8,6 +8,7 @@ type Props = {
   price: number
   discountPrice?: number
   image: string
+  availability: "pronta_entrega" | "encomenda"
 }
 
 export default function ProductCard({
@@ -17,65 +18,77 @@ export default function ProductCard({
   category,
   price,
   discountPrice,
-  image
+  image,
+  availability
 }: Props) {
 
-  useCart()
-
-
   return (
-  <Link to={`/produto/${id}`}>
-    <div className="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
+    <Link to={`/produto/${id}`}>
+      <div className="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition">
 
-      <img
-        src={image}
-        alt={name}
-        className="w-full aspect-square object-contain rounded-xl mb-4 bg-gray-100 p-4"
-      />
+        <img
+          src={image}
+          alt={name}
+          className="w-full aspect-square object-contain rounded-xl mb-4 bg-gray-100 p-4"
+        />
 
-      {/* CATEGORIA */}
-      {category && (
-        <span className="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
-          {category}
-        </span>
-      )}
+        {/* CATEGORIA + STATUS */}
+        <div className="flex items-center justify-between mb-2">
 
-      <h3 className="text-lg font-semibold mt-3 mb-2">
-        {name}
-      </h3>
+          {category && (
+            <span className="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full">
+              {category}
+            </span>
+          )}
 
-      <p className="text-sm text-gray-500 mb-3">
-        {description}
-      </p>
+          <span
+            className={`text-xs px-3 py-1 rounded-full font-medium ${
+              availability === "pronta_entrega"
+                ? "bg-green-100 text-green-700"
+                : "bg-yellow-100 text-yellow-700"
+            }`}
+          >
+            {availability === "pronta_entrega"
+              ? "Pronta Entrega"
+              : "Encomenda"}
+          </span>
 
-      {/* PREÇO */}
-      <div className="mb-4">
+        </div>
 
-        {discountPrice && discountPrice > 0 ? (
-          <>
-            <p className="text-sm text-gray-400 line-through">
+        <h3 className="text-lg font-semibold mt-3 mb-2">
+          {name}
+        </h3>
+
+        <p className="text-sm text-gray-500 mb-3">
+          {description}
+        </p>
+
+        {/* PREÇO */}
+        <div className="mb-4">
+
+          {discountPrice && discountPrice > 0 ? (
+            <>
+              <p className="text-sm text-gray-400 line-through">
+                R$ {price.toLocaleString("pt-BR")}
+              </p>
+
+              <p className="text-xl font-bold text-green-600">
+                R$ {discountPrice.toLocaleString("pt-BR")}
+              </p>
+            </>
+          ) : (
+            <p className="text-xl font-bold text-green-600">
               R$ {price.toLocaleString("pt-BR")}
             </p>
+          )}
 
-            <p className="text-xl font-bold text-green-600">
-              R$ {discountPrice.toLocaleString("pt-BR")}
-            </p>
-          </>
-        ) : (
-          <p className="text-xl font-bold text-green-600">
-            R$ {price.toLocaleString("pt-BR")}
-          </p>
-        )}
+        </div>
+
+        <div className="bg-black text-white py-2 rounded-lg text-center">
+          Ver Produto
+        </div>
 
       </div>
-
-      <Link
-  to={`/produto/${id}`}
-  className="bg-black text-white py-2 rounded-lg text-center block"
->
-  Ver Produto
-</Link>
-    </div>
     </Link>
   )
 }

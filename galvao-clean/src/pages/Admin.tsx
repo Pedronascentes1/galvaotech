@@ -15,10 +15,13 @@ export default function Admin() {
     category: "Lacrado",
     price: "",
     discountPrice: "",
-    image: ""
+    image: "",
+    availability: "pronta_entrega"
   })
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) {
     const { name, value } = e.target
     setForm(prev => ({ ...prev, [name]: value }))
   }
@@ -30,6 +33,7 @@ export default function Admin() {
   }
 
   async function uploadImage(file: File) {
+
     const formData = new FormData()
     formData.append("image", file)
 
@@ -47,6 +51,7 @@ export default function Admin() {
   }
 
   async function handleSubmit(e: React.FormEvent) {
+
     e.preventDefault()
 
     if (!form.name || !form.price) return
@@ -54,6 +59,7 @@ export default function Admin() {
     let imageUrl = form.image
 
     try {
+
       if (selectedFile) {
         imageUrl = await uploadImage(selectedFile)
       }
@@ -66,14 +72,23 @@ export default function Admin() {
         discountPrice: form.discountPrice
           ? Number(form.discountPrice)
           : undefined,
-        image: imageUrl
+        image: imageUrl,
+        availability: form.availability
       }
 
       if (editingId) {
-        updateProduct({ id: editingId, ...productData })
+
+        await updateProduct({
+          id: editingId,
+          ...productData
+        } as any)
+
         setEditingId(null)
+
       } else {
-        addProduct(productData as any)
+
+        await addProduct(productData as any)
+
       }
 
       setForm({
@@ -82,19 +97,23 @@ export default function Admin() {
         category: "Lacrado",
         price: "",
         discountPrice: "",
-        image: ""
+        image: "",
+        availability: "pronta_entrega"
       })
 
       setSelectedFile(null)
 
     } catch (error) {
+
       console.error(error)
       alert("Erro ao enviar imagem.")
+
     }
   }
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
+
       <BackButton />
 
       <div className="max-w-6xl mx-auto">
@@ -102,6 +121,8 @@ export default function Admin() {
         <h1 className="text-2xl font-bold mb-8">
           Gerenciar Produtos
         </h1>
+
+        {/* FORMULÁRIO */}
 
         <form
           onSubmit={handleSubmit}
@@ -137,6 +158,23 @@ export default function Admin() {
             <option>Acessórios</option>
           </select>
 
+          {/* STATUS DO PRODUTO */}
+
+          <select
+            name="availability"
+            value={form.availability}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+          >
+            <option value="pronta_entrega">
+              Pronta Entrega
+            </option>
+
+            <option value="encomenda">
+              Produto por Encomenda
+            </option>
+          </select>
+
           <input
             name="price"
             placeholder="Preço normal"
@@ -153,6 +191,8 @@ export default function Admin() {
             className="w-full border p-2 rounded"
           />
 
+          {/* UPLOAD IMAGEM */}
+
           <input
             type="file"
             accept="image/*"
@@ -164,17 +204,24 @@ export default function Admin() {
             type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded-lg"
           >
-            {editingId ? "Atualizar Produto" : "Adicionar Produto"}
+            {editingId
+              ? "Atualizar Produto"
+              : "Adicionar Produto"}
           </button>
 
         </form>
 
+        {/* LISTAGEM */}
+
         <div className="space-y-6">
+
           {products.map(product => (
+
             <div
               key={product.id}
               className="bg-white p-6 rounded-xl shadow flex justify-between"
             >
+
               <div>
 
                 <h2 className="font-semibold text-lg">
@@ -185,11 +232,14 @@ export default function Admin() {
                   {product.description}
                 </p>
 
+                {/* PREÇO */}
+
                 {product.discountPrice ? (
                   <>
                     <p className="text-gray-400 line-through text-sm">
                       R$ {product.price.toLocaleString("pt-BR")}
                     </p>
+
                     <p className="text-green-600 font-bold text-lg">
                       R$ {product.discountPrice.toLocaleString("pt-BR")}
                     </p>
@@ -204,6 +254,20 @@ export default function Admin() {
                   {product.category}
                 </p>
 
+                {/* STATUS */}
+
+                <p className={`text-sm mt-1 font-medium ${
+                  product.availability === "pronta_entrega"
+                    ? "text-green-600"
+                    : "text-yellow-600"
+                }`}>
+                  {product.availability === "pronta_entrega"
+                    ? "Pronta Entrega"
+                    : "Produto por Encomenda"}
+                </p>
+
+                {/* IMAGEM */}
+
                 {product.image && (
                   <img
                     src={product.image}
@@ -214,11 +278,15 @@ export default function Admin() {
 
               </div>
 
+              {/* BOTÕES */}
+
               <div className="flex gap-4 items-start">
 
                 <button
                   onClick={() => {
+
                     setEditingId(product.id)
+
                     setForm({
                       name: product.name,
                       description: product.description,
@@ -227,8 +295,10 @@ export default function Admin() {
                       discountPrice: product.discountPrice
                         ? product.discountPrice.toString()
                         : "",
-                      image: product.image
+                      image: product.image,
+                      availability: product.availability
                     })
+
                   }}
                   className="text-blue-600"
                 >
@@ -243,11 +313,15 @@ export default function Admin() {
                 </button>
 
               </div>
+
             </div>
+
           ))}
+
         </div>
 
       </div>
+
     </div>
   )
 }

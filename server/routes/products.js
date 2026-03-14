@@ -18,11 +18,11 @@ router.get("/", async (req, res) => {
 // CRIAR (protegido)
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { name, description, category, price, discountPrice, image } = req.body
+    const { name, description, category, price, discountPrice, image, availability } = req.body
 
     const [result] = await db.query(
-      `INSERT INTO products (name, description, category, price, discountPrice, image)
-       VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO products (name, description, category, price, discountPrice, image, availability)
+       VALUES (?, ?, ?, ?, ?, ?,?)`,
       [name, description, category, price, discountPrice ?? null, image]
     )
 
@@ -45,12 +45,12 @@ router.post("/", authMiddleware, async (req, res) => {
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const { id } = req.params
-    const { name, description, category, price, discountPrice, image } = req.body
+    const { name, description, category, price, discountPrice, image, availability } = req.body
 
     await db.query(
       `UPDATE products
        SET name=?, description=?, category=?, price=?, discountPrice=?, image=?
-       WHERE id=?`,
+       WHERE id=?, availability = ?`, 
       [name, description, category, price, discountPrice ?? null, image, id]
     )
 

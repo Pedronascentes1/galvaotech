@@ -229,6 +229,7 @@ function formatCurrency(value: number) {
   price={product.price}
   discountPrice={product.discountPrice}
   image={product.image}
+  availability={product.availability}
 />
 
               ))}

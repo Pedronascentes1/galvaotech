@@ -14,6 +14,7 @@ export type Product = {
 
 type ProductContextType = {
   products: Product[]
+  loading: boolean
   addProduct: (product: Omit<Product, "id">) => Promise<void>
   removeProduct: (id: number) => Promise<void>
   updateProduct: (product: Product) => Promise<void>
@@ -26,6 +27,7 @@ const API_URL = "https://galvaotech.onrender.com/products"
 export function ProductProvider({ children }: { children: ReactNode }) {
 
   const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
 
   function handleUnauthorized() {
     localStorage.removeItem("token")
@@ -33,12 +35,24 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }
 
   async function fetchProducts() {
+
     try {
+
+      setLoading(true)
+
       const res = await fetch(API_URL)
       const data = await res.json()
+
       setProducts(data)
+
     } catch (err) {
+
       console.error("Erro ao buscar produtos:", err)
+
+    } finally {
+
+      setLoading(false)
+
     }
   }
 
@@ -47,7 +61,9 @@ export function ProductProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function addProduct(product: Omit<Product, "id">) {
+
     try {
+
       const token = localStorage.getItem("token")
 
       const response = await fetch(API_URL, {
@@ -74,12 +90,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       await fetchProducts()
 
     } catch (error) {
+
       console.error("Erro ao adicionar produto:", error)
+
     }
   }
 
   async function removeProduct(id: number) {
+
     try {
+
       const token = localStorage.getItem("token")
 
       const response = await fetch(`${API_URL}/${id}`, {
@@ -104,12 +124,16 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       await fetchProducts()
 
     } catch (error) {
+
       console.error("Erro ao remover produto:", error)
+
     }
   }
 
   async function updateProduct(updatedProduct: Product) {
+
     try {
+
       const token = localStorage.getItem("token")
 
       const response = await fetch(`${API_URL}/${updatedProduct.id}`, {
@@ -136,13 +160,21 @@ export function ProductProvider({ children }: { children: ReactNode }) {
       await fetchProducts()
 
     } catch (error) {
+
       console.error("Erro ao atualizar produto:", error)
+
     }
   }
 
   return (
     <ProductContext.Provider
-      value={{ products, addProduct, removeProduct, updateProduct }}
+      value={{
+        products,
+        loading,
+        addProduct,
+        removeProduct,
+        updateProduct
+      }}
     >
       {children}
     </ProductContext.Provider>
@@ -150,9 +182,12 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 }
 
 export function useProducts() {
+
   const context = useContext(ProductContext)
+
   if (!context) {
     throw new Error("useProducts must be used inside ProductProvider")
   }
+
   return context
 }

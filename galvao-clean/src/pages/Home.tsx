@@ -6,7 +6,7 @@ import { useState, useRef, useEffect } from "react"
 import logo from "../assets/logo.png"
 import Footer from "../components/Footer"
 import { ShieldCheck, Truck, Phone } from "lucide-react"
-
+import ProductSkeleton from "../components/ProductSkeleton"
 
 
 
@@ -17,6 +17,15 @@ export default function Home() {
     const [animateCount, setAnimateCount] = useState(false)
     const productsRef = useRef<HTMLDivElement | null>(null)
     const { products } = useProducts()
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+      if (products && products.length > 0) {
+        setLoading(false)
+      } else {
+        setLoading(true)
+      }
+    }, [products])
 
 
     const [openCart, setOpenCart] = useState(false)
@@ -356,21 +365,24 @@ function formatCurrency(value: number) {
     </h2>
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-      {products.map(product => (
-  <ProductCard
-  key={product.id}
-  id={product.id}
-  name={product.name}
-  description={product.description}
-  category={product.category}
-  price={product.price}
-  discountPrice={product.discountPrice}
-  image={product.image}
-  availability={product.availability}
-/>
-
-
-))}
+      {loading
+  ? Array.from({ length: 6 }).map((_, i) => (
+      <ProductSkeleton key={i} />
+    ))
+  : products.map(product => (
+      <ProductCard
+        key={product.id}
+        id={product.id}
+        name={product.name}
+        description={product.description}
+        category={product.category}
+        price={product.price}
+        discountPrice={product.discountPrice}
+        image={product.image}
+        availability={product.availability}
+      />
+    ))
+}
 
     </div>
 
